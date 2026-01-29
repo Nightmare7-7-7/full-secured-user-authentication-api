@@ -2,9 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --exec npx tsx src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,9 @@
     "nodemon": "^3.1.11",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
   }
 }
