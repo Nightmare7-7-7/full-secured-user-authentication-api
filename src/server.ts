@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import userRoutes from "./routes/user.routes";
 
 //load env variables
 dotenv.config();
@@ -16,3 +17,6 @@ app.listen(PORT, () => {
      console.log(`Server is running on port http://localhost:${PORT}`);
 })
  
+
+//api paths
+app.use("/api/account", userRoutes);
