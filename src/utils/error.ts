@@ -1,7 +1,10 @@
-export const ReturnError = (res:any,status:number,message:string,errors?:any[])=>{
-    return res.status(status).json({
-        success:false,
-        message,
-        errors // optional 
-    });
+export class returnError extends Error {
+    statusCode: number;
+
+    constructor(statusCode: number, message: string) {
+        super(message);
+        this.statusCode = statusCode;
+    }
 }
+
+
