@@ -19,3 +19,8 @@ export const registerValidator = z.object({
 },customMsgs.json_err)
 
 
+export const loginValidator = z.object({
+    email: z.string(customMsgs.empty_email).email(customMsgs.invalid_email),
+    password: z.string(customMsgs.empty_password)
+
+},customMsgs.json_err)

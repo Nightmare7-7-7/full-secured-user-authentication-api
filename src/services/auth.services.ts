@@ -1,40 +1,39 @@
-import { hashPassword } from './../utils/hash';
-import {prisma} from "../prisma";
-import { ReturnError } from "../utils/error";
-import { string } from 'zod';
+import { Response } from 'express';
+import { comparePassword, hashPassword } from './../utils/hash';
+import { prisma } from "../prisma";
+import { returnError } from '../utils/error';
+import { generateToken } from '../utils/jwt_token';
 
-export const createUser = async (res:any,fullname: string, email: string, password:string)=>{
+export const createUser = async (fullname: string, email: string, password: string) => {
 
     // Check if user already exists
     const exists = await prisma.user.findUnique({
-        where: {email}
+        where: { email }
     });
 
-    if(exists){
-        ReturnError(res,400,"user with this email already exists");
-        return;
+    if (exists) {
+        throw new returnError(400, "user with this email already exists");
     }
 
     // pass password to hashPassword utility function
     const hashed = await hashPassword(password);
 
-    if(!hashed){
-        ReturnError(res,500,"Internal server error");
-        return;
+    if (!hashed) {
+        throw new returnError(500, "Internal server error");
     }
 
     // create user with only selected fields in return
 
     const user = await prisma.user.create({
-        data:{
-            fullName:fullname,
+        data: {
+            fullName: fullname,
             email,
-            password:hashed
+            password: hashed
         },
-        select:{
-            id:true,
-            fullName:true,
-            email:true
+        select: {
+            id: true,
+            fullName: true,
+            email: true
         }
     })
 
@@ -45,3 +44,37 @@ export const createUser = async (res:any,fullname: string, email: string, passwo
 
 
 }
+
+
+export const loginUser = async (email: string, password: string) => {
+    // Find user by email
+    const user = await prisma.user.findUnique({
+        where: { email }
+    })
+
+    if (!user) {
+        throw new returnError(400, "Invalid email or password");
+    }
+
+    //pass it to compare password utility function
+    const isPasswordValid = await comparePassword(user.password, password);
+
+    if (!isPasswordValid) {
+        throw new returnError(400, "Invalid email or password");
+    }
+
+    const token = await generateToken({ id: user.id, email: user.email, fullName: user.fullName, isAdmin: user.isAdmin });
+
+    if (!token) {
+        throw new Error("Internal server error");
+    }
+
+    return {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        auth_token: token
+    };
+
+}
+
