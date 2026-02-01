@@ -7,7 +7,7 @@ const customMsgs = {
     empty_email:'email shouldnt be empty',
     invalid_email:'please provide a valid email address',
     empty_password:"password shouldnt be empty",
-    short_password:'password must be at least 6 characters long'
+    short_password:'password must be at least 6 characters long',
 }
 
 
@@ -24,3 +24,11 @@ export const loginValidator = z.object({
     password: z.string(customMsgs.empty_password)
 
 },customMsgs.json_err)
+
+
+
+export const resetValidator = z.object({
+    email: z.string(customMsgs.empty_email).email(customMsgs.invalid_email),
+    newPassword: z.string(customMsgs.empty_password).min(6,customMsgs.short_password)
+});
+
