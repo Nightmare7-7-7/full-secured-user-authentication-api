@@ -143,6 +143,20 @@ export const Verfy = async (req: Request, res: Response) => {
         });
 
     } catch (err: any) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(400).json({
+                success: false,
+                message: "Reset token has been expired"
+            });
+        }
+
+        if (err.name === "JsonWebTokenError") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired token"
+            });
+        }
+
         if (err instanceof returnError) {
             return res.status(err.statusCode).json({
                 success: false,
@@ -152,8 +166,9 @@ export const Verfy = async (req: Request, res: Response) => {
 
         return res.status(500).json({
             success: false,
-            message: "Internal server error",
-            err: err.message
+            message: "Internal server error"
         });
+
+
     }
 }

@@ -137,9 +137,6 @@ export const verifyResetToken = async (token: string) => {
 
     const payload = await verifyToken(token);
 
-    if (!payload) {
-        throw new returnError(400, "Invalid or expired token");
-    }
     const { email, hash } = payload as { email: string, hash: string };
 
     const user = await prisma.user.update({
