@@ -1,15 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes";
+import helmet from "helmet";
 
 //load env variables
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(helmet());
 
 
-const PORT = Number(process.env.PORT) || 3000
+const PORT = Number(process.env.PORT) || 8181;
 
 
 //start server
