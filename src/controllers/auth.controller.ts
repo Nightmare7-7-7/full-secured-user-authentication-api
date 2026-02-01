@@ -1,8 +1,8 @@
-import { registerValidator, loginValidator } from "../validators/auth.validator";
+import { registerValidator, loginValidator, resetValidator } from "../validators/auth.validator";
 import { returnError } from "../utils/error";
-import { createUser, loginUser } from "../services/auth.services";
+import { createUser, loginUser, sendReset, verifyResetToken } from "../services/auth.services";
 import { Request, Response } from "express";
-import { ZodError } from "zod"; // Import ZodError
+import { success, ZodError } from "zod"; // Import ZodError
 
 
 interface User {
@@ -93,3 +93,67 @@ export const Login = async (req: Request, res: Response) => {
 
 }
 
+
+export const ResetPassword = async (req: Request, res: Response) => {
+    try {
+        // Implementation for password reset
+        const { email, newPassword } = resetValidator.parse(req.body);
+
+        const user = await sendReset(email, newPassword);
+
+        return res.status(200).json({
+            success: true,
+            message: "Password reset link has been sent to your email",
+
+        });
+
+    } catch (err: any) {
+        if (err instanceof returnError) {
+            return res.status(err.statusCode).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        if (err instanceof ZodError) {
+            return res.status(400).json({
+                success: false,
+                message: err.issues[0].message
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            err: err.message
+        });
+    }
+}
+
+
+export const Verfy = async (req: Request, res: Response) => {
+    try {
+        const token = req.query.token as string;
+
+        const valid = await verifyResetToken(token);
+
+        return res.status(200).json({
+            success: true,
+            message: `Hello, ${valid.fullName} Your password has been reseted successfully`
+        });
+
+    } catch (err: any) {
+        if (err instanceof returnError) {
+            return res.status(err.statusCode).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            err: err.message
+        });
+    }
+}

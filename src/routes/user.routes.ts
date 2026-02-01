@@ -1,4 +1,4 @@
-import { createAccount, Login } from "../controllers/auth.controller";
+import { createAccount, Login, ResetPassword,Verfy } from "../controllers/auth.controller";
 import verfyUser from "../middlewares/verfyUser.middleware";
 import express from "express";
 
@@ -14,5 +14,7 @@ route.get("/me",verfyUser, (req, res)=>{
     })
 });
 
+route.post("/reset-password", ResetPassword);
+route.get("/reset-password/verfy", Verfy);
 
 export default route;

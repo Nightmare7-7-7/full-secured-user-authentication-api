@@ -1,7 +1,7 @@
 import {z} from 'zod';
 
 const customMsgs = {
-    json_err:'please provide valid registration details in JSON format',
+    json_err:'please provide valid details in JSON format',
     empty_name:"fullname shouldnt be empty",
     short_name:'fullname must be at least 3 characters long',
     empty_email:'email shouldnt be empty',
@@ -30,5 +30,5 @@ export const loginValidator = z.object({
 export const resetValidator = z.object({
     email: z.string(customMsgs.empty_email).email(customMsgs.invalid_email),
     newPassword: z.string(customMsgs.empty_password).min(6,customMsgs.short_password)
-});
+},customMsgs.json_err);
 
